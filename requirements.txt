@@ -1,24 +1,3 @@
-aiohttp @ https://files.pythonhosted.org/packages/f0/02/071500ac4da91f762dc35c9e22438b73158077da4e851a8e4741fa05ab4a/aiohttp-3.8.3-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl#sha256=20acae4f268317bb975671e375493dbdbc67cddb5f6c71eebdb85b34444ac46b
-aiosignal @ https://files.pythonhosted.org/packages/76/ac/a7305707cb852b7e16ff80eaf5692309bde30e2b1100a1fcacdc8f731d97/aiosignal-1.3.1-py3-none-any.whl#sha256=f8376fb07dd1e86a584e4fcdec80b36b7f81aac666ebc724e2c090300dd83b17
-argon2-cffi @ https://files.pythonhosted.org/packages/a8/07/946d5a9431bae05a776a59746ec385fbb79b526738d25e4202d3e0bbf7f4/argon2_cffi-21.3.0-py3-none-any.whl#sha256=8c976986f2c5c0e5000919e6de187906cfd81fb1c72bf9d88c01177e77da7f80
-argon2-cffi-bindings @ https://files.pythonhosted.org/packages/ec/f7/378254e6dd7ae6f31fe40c8649eea7d4832a42243acaf0f1fff9083b2bed/argon2_cffi_bindings-21.2.0-cp36-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl#sha256=b746dba803a79238e925d9046a63aa26bf86ab2a2fe74ce6b009a1c3f5c8f2ae
-async-timeout @ https://files.pythonhosted.org/packages/d6/c1/8991e7c5385b897b8c020cdaad718c5b087a6626d1d11a23e1ea87e325a7/async_timeout-4.0.2-py3-none-any.whl#sha256=8ca1e4fcf50d07413d66d1a5e416e42cfdf5851c981d679a09851a6853383b3c
-attrs @ https://files.pythonhosted.org/packages/fb/6e/6f83bf616d2becdf333a1640f1d463fef3150e2e926b7010cb0f81c95e88/attrs-22.2.0-py3-none-any.whl#sha256=29e95c7f6778868dbd49170f98f8818f78f3dc5e0e37c0b1f474e3561b240836
-CacheControl==0.12.11
-cachelib==0.10.2
-cachetools==4.2.4
-cachy==0.3.0
-certifi @ https://files.pythonhosted.org/packages/71/4c/3db2b8021bd6f2f0ceb0e088d6b2d49147671f25832fb17970e9b583d742/certifi-2022.12.7-py3-none-any.whl#sha256=4ad3232f5e926d6718ec31cfc1fcadfde020920e278684144551c91769c7bc18
-cffi==1.15.1
-chardet==3.0.4
-charset-normalizer @ https://files.pythonhosted.org/packages/db/51/a507c856293ab05cdc1db77ff4bc1268ddd39f29e7dc4919aa497f0adbec/charset_normalizer-2.1.1-py3-none-any.whl#sha256=83e9a75d1911279afd89352c68b45348559d1fc0506b054b346651b5e7fee29f
-cleo==0.8.1
-click @ https://files.pythonhosted.org/packages/c2/f1/df59e28c642d583f7dacffb1e0965d0e00b218e0186d7858ac5233dce840/click-8.1.3-py3-none-any.whl#sha256=bb4d8133cb15a609f44e8213d9b391b0809795062913b383c62be0ee95b1db48
-clikit==0.6.2
-crashtest==0.3.1
-cryptography>=4.0.0
-debugpy @ https://files.pythonhosted.org/packages/92/d5/b0f9b31b5fc902aa1611d0163652713b21661201f7008051fd5e512e851b/debugpy-1.6.5-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl#sha256=17039e392d6f38388a68bd02c5f823b32a92142a851e96ba3ec52aeb1ce9d900
-distlib==0.3.6
 emoji==2.2.0
 filelock==3.9.0
 Flask @ https://files.pythonhosted.org/packages/0f/43/15f4f9ab225b0b25352412e8daa3d0e3d135fcf5e127070c74c3632c8b4c/Flask-2.2.2-py3-none-any.whl#sha256=b9c46cc36662a7949f34b52d8ec7bb59c0d74ba08ba6cb9ce9adc1d8676d9526
