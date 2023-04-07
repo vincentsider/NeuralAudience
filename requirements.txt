@@ -3,7 +3,7 @@ googletrans==4.0.0-rc1
 google-cloud-translate==3.3.2
 google-auth==2.3.3
 google-auth-oauthlib==0.4.6
-google-auth-httplib2==0.1.1
+google-auth-httplib2==0.1.0
 google-api-core==2.2.1
 google-api-python-client==2.24.0
 google-cloud-core==2.2.1
