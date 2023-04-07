@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Audience</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script>
+        function submitForm(event) {
+            event.preventDefault();
+
+            const urlField = document.getElementById("url");
+            const personaElement = document.getElementById("persona");
+            const loadingAnimation = document.getElementById("loading-animation");
+
+            loadingAnimation.style.display = "flex";
+
+            fetch("/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams(new FormData(event.target))
+            })
+            .then(response => response.text())
+            .then(persona => {
+                personaElement.innerHTML = "";
+                persona.split("\n").forEach((answer, index) => {
+                if (index === 0) {
+               // Skip the "\Questions|Answers" line
+              return;
+              }
+                const answerElement = document.createElement("p");
+                answerElement.innerText = answer.trim();
+                personaElement.appendChild(answerElement);
+                  loadingAnimation.style.display = "none"; 
+              });
+                 
+                
+            })
+            .catch(error => {
+                console.error("Error fetching persona:", error);
+                loadingAnimation.style.display = "none";
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Neural Audience</h1>
+        </header>
+        <section class="form-section">
+            <form onsubmit="submitForm(event)">
+                <label for="url">YouTube Video URL:</label>
+                <input type="text" name="url" id="url" required>
+                <button type="submit">Generate Persona</button>
+            </form>
+        </section>
+        <section class="result-section">
+            <h2>Generated Persona:</h2>
+            <div id="persona" class="answers-container"></div>
+            <div id="loading-animation" class="loading-animation">
+                <div class="material-icons">autorenew</div>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

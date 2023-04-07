@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Persona Archive</title>
+</head>
+<body>
+    <h1>Your Persona Archive</h1>
+    <ul>
+    {% for persona in personas %}
+        <li>{{ persona }}</li>
+    {% endfor %}
+    </ul>
+    <p><a href="/">Back to Home</a></p>
+</body>
+</html>
