@@ -215,22 +215,29 @@ def home():
     if video_id:  # Only call get_video_title if video_id is not None
         video_title = get_video_title(video_id)
     if video_title:   
-    # Pass comments to GPT-3-5 API to generate persona
-        prompt = f"Here are some comments from a YouTube video about {video_title}:\n{comments_str_truncated}\n\nBased on the above information, please answer the following questions:\n\n1. What is the general tone of the comments, and how does this reflect on the personality of the commenters?\n\n2. What are the key demographics of the commenters, such as age, gender, and location? How do these demographics relate to their personality traits?\n\n3. How do the commenters gather information and make decisions about purchases? What motivates them to engage with this content, and what are their goals and interests?\n\n4. How much do the commenters score on each of the Big Five personality traits (openness, conscientiousness, extraversion, agreeableness, and neuroticism)? Please rate their scores on a scale from 1 to 10, with 1 being low and 10 being high, and provide specific examples of comments that demonstrate these personality traits.\n\n5. What are the key demographics\n\n6. What are their main pain points\n\n7. What are their goals, motivations\n\n8.How do they gather information, make decisions about purchases?\n\n9. what are their Interests.\n\n10. What is the sentiment on a scale from 0 to 10, 0 being sad and 10 being happy"
+        # Pass comments to GPT-3-5 API to generate persona
+        prompt = f"Here are some comments from a YouTube video about {video_title}:\n{comments_str_truncated}\n\nBased on the above information, please answer the following questions:\n\n1. What is the general tone of the comments, and how does this reflect on the personality of the commenters?\n\n2. What are the key demographics of the commenters?\n\n3. How do the commenters gather information and make decisions about purchases? What motivates them to engage with this content, and what are their goals and interests?\n\n4. Rate the commenters on each of the Big Five personality traits (openness, conscientiousness, extraversion, agreeableness, and neuroticism) on a scale from 1 to 10, with 1 being low and 10 being high. Provide examples of comments that demonstrate these traits.\n\n5. What are their main pain points?\n\n6. What are their goals and motivations?\n\n7. What are their interests?\n\n8. What is the sentiment on a scale from 0 to 10, 0 being sad and 10 being happy?"
         openai.api_key = os.environ.get("OPENAI_API_KEY")
-        completions = openai.Completion.create(
-          engine="text-davinci-003",
-          prompt=prompt,
-          max_tokens=2000,
-          n=1,
-          stop=None,
-          temperature=0.5,
-          frequency_penalty=0,
-          presence_penalty=0
-      )
-    # Extract the generated persona from the API response
-        persona = completions.choices[0].text.strip()
+        try:
+            completions = openai.Completion.create(
+                engine="text-davinci-003",
+                prompt=prompt,
+                max_tokens=2000,
+                n=1,
+                stop=None,
+                temperature=0.8,
+                frequency_penalty=0,
+                presence_penalty=0
+            )
+            # Extract the generated persona from the API response
+            persona = completions.choices[0].text.strip()
 
+        except Exception as e:
+            print(f"An error occurred while calling the OpenAI API: {e}")
+            persona = "Error: Unable to generate persona."
+
+      
+        print("OpenAI completion:", completions)
     # Return the generated persona as the result of the form submission
         return persona
     else:
