@@ -182,6 +182,10 @@ def get_video_comments(video_id, max_results=100):
 
     return comments
 
+@app.route('/.well-known/openapi.yaml')
+def serve_openapi_yaml():
+    return send_file('.well-known/openapi.yaml')
+
 @app.route('/api/video_comments', methods=['POST'])
 def api_video_comments():
     # Extract the video ID from the YouTube URL entered by the user
