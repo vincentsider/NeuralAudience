@@ -33,6 +33,7 @@ translate_client = translate.Client(credentials=credentials)
 
 # Create a Flask app instance
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": ["https://chat.openai.com"]}})
 def get_video_title(video_id):
     url = f"https://www.googleapis.com/youtube/v3/videos"
     params = {
