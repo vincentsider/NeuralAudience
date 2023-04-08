@@ -75,19 +75,4 @@ components:
         persona:
           type: string
           description: The generated persona based on the input comments.
-Footer
-© 2023 GitHub, Inc.
-Footer navigation
-
-    Terms
-    Privacy
-    Security
-    Status
-    Docs
-    Contact GitHub
-    Pricing
-    API
-    Training
-    Blog
-    About
 
