@@ -4,7 +4,7 @@ info:
   description: A plugin that allows the user to generate personas from YouTube video comments using ChatGPT. The user can either access the application directly or via API endpoints.
   version: 'v1'
 servers:
-  - url: https://stingray-app-9pild.ondigitalocean.app/
+  - url: https://stingray-app-9pild.ondigitalocean.app
 paths:
   /api/video_comments:
     post:
