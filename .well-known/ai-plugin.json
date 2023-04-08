@@ -1,0 +1,20 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "YouTube Persona Generator",
+  "name_for_model": "yt_persona_generator",
+  "description_for_human": "A plugin to generate personas based on YouTube video comments.",
+  "description_for_model": "A plugin to generate personas based on YouTube video comments.",
+  "auth": {
+    "type": "service_http",
+    "authorization_type": "bearer",
+    
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://your-host-url/openapi.yaml",
+    "is_user_authenticated": false
+  },
+  "logo_url": "https://your-host-url/logo.png",
+  "contact_email": "support@example.com",
+  "legal_info_url": "https://your-host-url/legal"
+}
