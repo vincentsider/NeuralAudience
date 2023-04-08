@@ -11,7 +11,7 @@
   },
   "api": {
     "type": "openapi",
-    "url": "https://your-host-url/openapi.yaml",
+    "url": "https://stingray-app-9pild.ondigitalocean.app/.well-known/openapi.yaml",
     "is_user_authenticated": false
   },
   "logo_url": "https://your-host-url/logo.png",
