@@ -1,20 +1,19 @@
 {
   "schema_version": "v1",
-  "name_for_human": "YouTube Persona Generator",
   "name_for_model": "yt_persona_generator",
-  "description_for_human": "A plugin to generate personas based on YouTube video comments.",
+  "name_for_human": "YouTube Persona Generator",
   "description_for_model": "A plugin to generate personas based on YouTube video comments.",
+  "description_for_human": "A plugin to generate personas based on YouTube video comments.",
   "auth": {
-    "type": "service_http",
-    "authorization_type": "bearer",
-    
+    "type": "user_http",
+    "authorization_type": "bearer"
   },
   "api": {
     "type": "openapi",
     "url": "https://stingray-app-9pild.ondigitalocean.app/.well-known/openapi.yaml",
-    "is_user_authenticated": false
+    "has_user_authentication": false
   },
-  "logo_url": "https://your-host-url/logo.png",
-  "contact_email": "support@example.com",
-  "legal_info_url": "https://your-host-url/legal"
+  "logo_url": "https://plankton-app-3dkmf.ondigitalocean.app/.well-known/logo.png",
+  "contact_email": "getinference@gmail.com", 
+  "legal_info_url": "https://plankton-app-3dkmf.ondigitalocean.app/legal-info"
 }
