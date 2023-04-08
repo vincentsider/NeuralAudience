@@ -14,6 +14,7 @@ from google.oauth2 import service_account
 import json
 import re
 from langdetect.lang_detect_exception import LangDetectException
+from flask import jsonify
 from flask_cors import CORS
 
 #credentials_content = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS_CONTENT")
@@ -181,6 +182,52 @@ def get_video_comments(video_id, max_results=100):
 
     return comments
 
+@app.route('/api/video_comments', methods=['POST'])
+def api_video_comments():
+    # Extract the video ID from the YouTube URL entered by the user
+    video_id = extract_video_id(request.form['url'])
+
+    if not video_id:
+        return jsonify({"error": "Invalid YouTube URL"}), 400
+
+    # Use the YouTube API to retrieve comments from the video
+    comments = get_video_comments(video_id)
+
+    # Return comments as JSON, including original, translated, and sentiments
+    return jsonify(comments)
+
+# New API endpoint for generating a persona based on comments
+@app.route('/api/generate_persona', methods=['POST'])
+def api_generate_persona():
+    comments = request.get_json().get("comments", [])
+
+    # Combine the translated comments into a single string
+    comments_str = "\n".join([comment['translated'] for comment in comments])
+
+    # Truncate comments to fit within the character limit
+    max_chars = 2000
+    comments_str_truncated = truncate_str(comments_str, max_chars)
+
+    # Pass comments to GPT-3-5 API to generate persona
+    prompt = f"Here are some comments from a YouTube video about {video_title}:\n{comments_str_truncated}\n\nBased on the above information, please answer the following questions:\n\n1. What is the general tone of the comments, and how does this reflect on the personality of the commenters?\n\n2. What are the key demographics of the commenters, such as age, gender, and location? How do these demographics relate to their personality traits?\n\n3. How do the commenters gather information and make decisions about purchases? What motivates them to engage with this content, and what are their goals and interests?\n\n4. How much do the commenters score on each of the Big Five personality traits (openness, conscientiousness, extraversion, agreeableness, and neuroticism)? Please rate their scores on a scale from 1 to 10, with 1 being low and 10 being high, and provide specific examples of comments that demonstrate these personality traits.\n\n5. What are the key demographics\n\n6. What are their main pain points\n\n7. What are their goals, motivations\n\n8.How do they gather information, make decisions about purchases?\n\n9. what are their Interests.\n\n10. What is the sentiment on a scale from 0 to 10, 0 being sad and 10 being happy"
+    openai.api_key = os.environ.get("OPENAI_API_KEY")
+    completions = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        max_tokens=2000,
+        n=1,
+        stop=None,
+        temperature=0.5,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+
+    # Extract the generated persona from the API response
+    persona = completions.choices[0].text.strip()
+
+    # Return the generated persona as the result of the form submission
+    return jsonify({"persona": persona})
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
     def truncate_str(s, max_chars):
@@ -253,8 +300,6 @@ def home():
         return render_template('/home.html', persona=persona)
 
 
-# Start the Flask app and tell it to listen for incoming HTTP requests
+#Start the Flask app and tell it to listen for incoming HTTP requests
 #if __name__ == '__main__':
-#    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
-
-
+    #app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
