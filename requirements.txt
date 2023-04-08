@@ -14,5 +14,5 @@ TextBlob==0.15.3
 requests==2.27.1
 google-trans-new==1.1.9
 gunicorn==20.1.0
-Flask-CORS==3.1.1
+Flask-CORS==3.1.0
 
