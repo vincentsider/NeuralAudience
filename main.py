@@ -16,6 +16,7 @@ import re
 from langdetect.lang_detect_exception import LangDetectException
 from flask import jsonify
 from flask_cors import CORS
+from flask import Flask, send_file
 
 #credentials_content = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS_CONTENT")
 #credentials_info = json.loads(credentials_content)
