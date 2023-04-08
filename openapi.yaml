@@ -1,0 +1,93 @@
+openapi: 3.0.1
+info:
+  title: Neural Audience Plugin
+  description: A plugin that allows the user to generate personas from YouTube video comments using ChatGPT. The user can either access the application directly or via API endpoints.
+  version: 'v1'
+servers:
+  - url: https://stingray-app-9pild.ondigitalocean.app
+paths:
+  /api/video_comments:
+    post:
+      operationId: getVideoComments
+      summary: Get the video comments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/getVideoCommentsRequest'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getVideoCommentsResponse'
+  /api/generate_persona:
+    post:
+      operationId: generatePersona
+      summary: Generate the persona based on the comments
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/generatePersonaRequest'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/generatePersonaResponse'
+
+components:
+  schemas:
+    getVideoCommentsRequest:
+      type: object
+      required:
+      - video_id
+      properties:
+        video_id:
+          type: string
+          description: The video ID of the YouTube video.
+    getVideoCommentsResponse:
+      type: object
+      properties:
+        comments:
+          type: array
+          items:
+            type: string
+          description: The list of video comments.
+    generatePersonaRequest:
+      type: object
+      required:
+      - comments
+      properties:
+        comments:
+          type: array
+          items:
+            type: string
+          description: The list of comments to generate the persona from.
+    generatePersonaResponse:
+      type: object
+      properties:
+        persona:
+          type: string
+          description: The generated persona based on the input comments.
+Footer
+© 2023 GitHub, Inc.
+Footer navigation
+
+    Terms
+    Privacy
+    Security
+    Status
+    Docs
+    Contact GitHub
+    Pricing
+    API
+    Training
+    Blog
+    About
+
