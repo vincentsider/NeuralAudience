@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script>
-        function submitForm(event) {
+        async function submitForm(event) {
             event.preventDefault();
 
             const urlField = document.getElementById("url");
@@ -18,57 +18,113 @@
 
             loadingAnimation.style.display = "flex";
 
-            fetch("/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: new URLSearchParams(new FormData(event.target))
-            })
-            .then(response => response.text())
-            .then(persona => {
+            try {
+                const response = await fetch("/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: new URLSearchParams(new FormData(event.target))
+                });
+
+                if (!response.ok) {
+                    throw new Error("Error fetching persona");
+                }
+
+                const persona = await response.text();
+
                 personaElement.innerHTML = "";
                 persona.split("\n").forEach((answer, index) => {
-                if (index === 0) {
-               // Skip the "\Questions|Answers" line
-              return;
-              }
-                const answerElement = document.createElement("p");
-                answerElement.innerText = answer.trim();
-                personaElement.appendChild(answerElement);
-                  loadingAnimation.style.display = "none"; 
-              });
-                 
-                
-            })
-            .catch(error => {
-                console.error("Error fetching persona:", error);
+                    if (index === 0) {
+                        // Skip the "\Questions|Answers" line
+                        return;
+                    }
+                    const answerElement = document.createElement("p");
+                    answerElement.innerText = answer.trim();
+                    personaElement.appendChild(answerElement);
+                });
+
                 loadingAnimation.style.display = "none";
-            });
+            } catch (error) {
+                console.error("Error:", error);
+                loadingAnimation.style.display = "none";
+            }
+        }
+
+        async function submitFormUsingAPI(event) {
+            event.preventDefault();
+
+            const urlField = document.getElementById("url");
+            const personaElement = document.getElementById("persona");
+            const loadingAnimation = document.getElementById("loading-animation");
+
+            loadingAnimation.style.display = "flex";
+
+            try {
+                const videoUrl = urlField.value;
+
+                const commentsResponse = await fetch(`/api/video_comments?url=${encodeURIComponent(videoUrl)}`);
+                if (!commentsResponse.ok) {
+                    throw new Error("Error fetching video comments");
+                }
+
+                const comments = await commentsResponse.json();
+
+                const personaResponse = await fetch("/api/generate_persona", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(comments)
+                });
+
+                if (!personaResponse.ok) {
+                    throw new Error("Error generating persona");
+                }
+
+                const persona = await personaResponse.text();
+
+                personaElement.innerHTML = "";
+                persona.split("\n").forEach((answer, index) => {
+                    if (index === 0) {
+                        // Skip the "\Questions|Answers" line
+                        return;
+                    }
+                    const answerElement = document.createElement("p");
+                    answerElement.innerText = answer.trim();
+                    personaElement.appendChild(answerElement);
+                });
+
+                loadingAnimation.style.display = "none";
+            } catch (error) {
+                console.error("Error:", error);
+                loadingAnimation.style.display = "none";
+            }
         }
     </script>
-</head>
+</head
 <body>
-    <div class="container">
-        <header>
-            <h1>Neural Audience</h1>
-        </header>
-        <section class="form-section">
-            <form onsubmit="submitForm(event)">
-                <label for="url">YouTube Video URL:</label>
-                <input type="text" name="url" id="url" required>
-                <button type="submit">Generate Persona</button>
-            </form>
-        </section>
-        <section class="result-section">
-            <h2>Generated Persona:</h2>
-            <div id="persona" class="answers-container"></div>
-            <div id="loading-animation" class="loading-animation">
-                <div class="material-icons">autorenew</div>
-            </div>
-        </section>
-    </div>
-</body>
+        <div class="container">
+            <header>
+                <h1>Neural Audience</h1>
+            </header>
+            <section class="form-section">
+                <form onsubmit="submitForm(event)">
+                    <label for="url">YouTube Video URL:</label>
+                    <input type="text" name="url" id="url" required>
+                    <button type="submit">Generate Persona (Original)</button>
+                </form>
+                
+            </section>
+            <section class="result-section">
+                <h2>Generated Persona:</h2>
+                <div id="persona" class="answers-container"></div>
+                <div id="loading-animation" class="loading-animation">
+                    <div class="material-icons">autorenew</div>
+                </div>
+            </section>
+        </div>
+    </body>
 </html>
 
 
