@@ -16,7 +16,7 @@ import re
 from langdetect.lang_detect_exception import LangDetectException
 from flask import jsonify
 from flask_cors import CORS
-from flask import Flask, Response
+from flask import Flask, send_file, Response
 
 #credentials_content = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS_CONTENT")
 #credentials_info = json.loads(credentials_content)
@@ -187,13 +187,15 @@ def get_video_comments(video_id, max_results=100):
 def serve_openapi_yaml():
     with open('.well-known/openapi.yaml') as f:
         yaml_content = f.read()
-    return Response(yaml_content, mimetype='text/yaml')
+    headers = {'Content-Disposition': 'inline'}
+    return Response(yaml_content, mimetype='text/yaml', headers=headers)
 
 @app.route('/.well-known/ai-plugin.json')
 def serve_ai_plugin_json():
     with open('.well-known/ai-plugin.json') as f:
         json_content = f.read()
-    return Response(json_content, mimetype='application/json')
+    headers = {'Content-Disposition': 'inline'}
+    return Response(json_content, mimetype='application/json', headers=headers)
 
 @app.route('/api/video_comments', methods=['POST'])
 def api_video_comments():
