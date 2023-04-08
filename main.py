@@ -14,6 +14,7 @@ from google.oauth2 import service_account
 import json
 import re
 from langdetect.lang_detect_exception import LangDetectException
+from flask_cors import CORS
 
 #credentials_content = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS_CONTENT")
 #credentials_info = json.loads(credentials_content)
