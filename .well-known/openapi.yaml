@@ -1,0 +1,69 @@
+openapi: 3.0.0
+info:
+  title: YouTube Persona Generator
+  version: 1.0.0
+paths:
+  /comments:
+    post:
+      summary: Get video comments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+      responses:
+        '200':
+          description: A list of comments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  comments:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        original:
+                          type: string
+                        translated:
+                          type: string
+                        sentiments:
+                          type: array
+                          items:
+                            type: string
+  /persona:
+    post:
+      summary: Generate a persona based on video comments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comments:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      original:
+                        type: string
+                      translated:
+                        type: string
+                      sentiments:
+                        type: array
+                        items:
+                          type: string
+      responses:
+        '200':
+          description: The generated persona
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  persona:
+                    type: string
