@@ -1,10 +1,10 @@
-openapi: 3.0.1
+openapi: 3.0.2
 info:
-  title: Neural Audience Plugin
+  title: YouTube Persona Generator
   description: A plugin that allows the user to generate personas from YouTube video comments using ChatGPT. The user can either access the application directly or via API endpoints.
   version: 'v1'
 servers:
-  - url: https://stingray-app-9pild.ondigitalocean.app
+  - url: https://stingray-app-9pild.ondigitalocean.app/
 paths:
   /api/video_comments:
     post:
@@ -40,7 +40,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/generatePersonaResponse'
-
+  /api/process_chat_message:
+    post:
+      operationId: processChatMessage
+      summary: Process the chat message and extract YouTube URL
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/processChatMessageRequest'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/processChatMessageResponse'
 components:
   schemas:
     getVideoCommentsRequest:
@@ -75,4 +91,19 @@ components:
         persona:
           type: string
           description: The generated persona based on the input comments.
-
+    processChatMessageRequest:
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
+          description: The chat message containing the YouTube URL.
+    processChatMessageResponse:
+      type: object
+      properties:
+        comments:
+          type: array
+          items:
+            type: string
+          description: The list of video comments.
