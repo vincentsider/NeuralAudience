@@ -17,11 +17,7 @@ from langdetect.lang_detect_exception import LangDetectException
 from flask import jsonify
 from flask_cors import CORS
 from flask import Flask, send_file, Response
-
-#credentials_content = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS_CONTENT")
-#credentials_info = json.loads(credentials_content)
-#credentials = service_account.Credentials.from_service_account_info(credentials_info)
-#translate_client = translate.Client(credentials=credentials)
+from flask import Flask, send_from_directory
 
 # Load the JSON content from the Replit secret
 service_account_info = json.loads(os.environ.get("GOOGLE_APPLICATION_CREDENTIALS_CONTENT"))
@@ -32,10 +28,13 @@ credentials = service_account.Credentials.from_service_account_info(service_acco
 # Create a Cloud Translation API client
 translate_client = translate.Client(credentials=credentials)
 
+def truncate_str(s, max_chars):
+    """Truncate a string to a specified maximum number of characters."""
+    return s[:max_chars]
 
 # Create a Flask app instance
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["https://chat.openai.com"]}})
+CORS(app)
 def get_video_title(video_id):
     url = f"https://www.googleapis.com/youtube/v3/videos"
     params = {
@@ -182,13 +181,20 @@ def get_video_comments(video_id, max_results=100):
         data = response.json()
 
     return comments
+  
+def extract_video_id(url):
+    regex = r"(?:(?:https?:\/\/)?(?:www\.)?)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\_-]{10,12})"
+    match = re.search(regex, url)
+    return match.group(1) if match else None
 
-@app.route('/.well-known/openapi.yaml')
+      
+@app.route('/openapi.yaml')
 def serve_openapi_yaml():
-    with open('.well-known/openapi.yaml') as f:
+    with open('openapi.yaml') as f:
         yaml_content = f.read()
     headers = {'Content-Disposition': 'inline'}
     return Response(yaml_content, mimetype='text/yaml', headers=headers)
+
 
 @app.route('/.well-known/ai-plugin.json')
 def serve_ai_plugin_json():
@@ -197,12 +203,55 @@ def serve_ai_plugin_json():
     headers = {'Content-Disposition': 'inline'}
     return Response(json_content, mimetype='application/json', headers=headers)
 
+@app.route('/.well-known/logo.png')
+def serve_logo_png():
+    return send_from_directory('.well-known', 'logo.png', mimetype='image/png')
+
+@app.route('/api/process_chat_message', methods=['POST'])
+def api_process_chat_message():
+    # Extract the chat message from the request
+    data = request.get_json()
+    chat_message = data.get('message', '')
+
+    # Use a regular expression to extract the YouTube URL from the chat message
+    regex = r"(https?://(?:www\.)?youtu(?:be\.com/watch\?v=|\.be/)([\w-]+))"
+    match = re.search(regex, chat_message)
+    if not match:
+        return jsonify({"error": "Invalid YouTube URL"}), 400
+
+    # Extract the YouTube URL from the match
+    youtube_url = match.group(1)
+
+    # Call the /api/video_comments endpoint with the extracted URL
+    video_comments_response = api_video_comments({'url': youtube_url})
+
+    # Extract comments from the response
+    comments = video_comments_response.get_json()
+
+    # Call the api_generate_persona function with the comments
+    persona_response = api_generate_persona({'comments': comments})
+
+    # Return the response from the api_generate_persona function
+    return persona_response
+
 @app.route('/api/video_comments', methods=['POST'])
-def api_video_comments():
-    # Extract the video ID from the YouTube URL entered by the user
-    video_id = extract_video_id(request.form['url'])
+def api_video_comments(data=None):
+    # If data is not provided, extract it from the request
+    if data is None:
+        data = request.get_json()
+    
+    if not data or 'url' not in data:
+        print("URL parameter is missing")
+        return jsonify({"error": "URL parameter is missing"}), 400
+
+    video_id = extract_video_id(data['url'])
+
+    # Add print statements to debug
+    print(f"URL: {data['url']}")
+    print(f"Extracted Video ID: {video_id}")
 
     if not video_id:
+        print("Invalid YouTube URL")
         return jsonify({"error": "Invalid YouTube URL"}), 400
 
     # Use the YouTube API to retrieve comments from the video
@@ -213,9 +262,9 @@ def api_video_comments():
 
 # New API endpoint for generating a persona based on comments
 @app.route('/api/generate_persona', methods=['POST'])
-def api_generate_persona():
-    comments = request.get_json().get("comments", [])
-
+def api_generate_persona(data):
+    comments = data.get("comments", [])
+   
     # Combine the translated comments into a single string
     comments_str = "\n".join([comment['translated'] for comment in comments])
 
@@ -224,7 +273,7 @@ def api_generate_persona():
     comments_str_truncated = truncate_str(comments_str, max_chars)
 
     # Pass comments to GPT-3-5 API to generate persona
-    prompt = f"Here are some comments from a YouTube video about {video_title}:\n{comments_str_truncated}\n\nBased on the above information, please answer the following questions:\n\n1. What is the general tone of the comments, and how does this reflect on the personality of the commenters?\n\n2. What are the key demographics of the commenters, such as age, gender, and location? How do these demographics relate to their personality traits?\n\n3. How do the commenters gather information and make decisions about purchases? What motivates them to engage with this content, and what are their goals and interests?\n\n4. How much do the commenters score on each of the Big Five personality traits (openness, conscientiousness, extraversion, agreeableness, and neuroticism)? Please rate their scores on a scale from 1 to 10, with 1 being low and 10 being high, and provide specific examples of comments that demonstrate these personality traits.\n\n5. What are the key demographics\n\n6. What are their main pain points\n\n7. What are their goals, motivations\n\n8.How do they gather information, make decisions about purchases?\n\n9. what are their Interests.\n\n10. What is the sentiment on a scale from 0 to 10, 0 being sad and 10 being happy"
+    prompt = f"Here are some comments from a YouTube video about:\n{comments_str_truncated}\n\nBased on the above information, please answer the following questions:\n\n1. What is the general tone of the comments, and how does this reflect on the personality of the commenters?\n\n2. What are the key demographics of the commenters, such as age, gender, and location? How do these demographics relate to their personality traits?\n\n3. How do the commenters gather information and make decisions about purchases? What motivates them to engage with this content, and what are their goals and interests?\n\n4. How much do the commenters score on each of the Big Five personality traits (openness, conscientiousness, extraversion, agreeableness, and neuroticism)? Please rate their scores on a scale from 1 to 10, with 1 being low and 10 being high, and provide specific examples of comments that demonstrate these personality traits.\n\n5. What are the key demographics\n\n6. What are their main pain points\n\n7. What are their goals, motivations\n\n8.How do they gather information, make decisions about purchases?\n\n9. what are their Interests.\n\n10. What is the sentiment on a scale from 0 to 10, 0 being sad and 10 being happy"
     openai.api_key = os.environ.get("OPENAI_API_KEY")
     completions = openai.Completion.create(
         engine="text-davinci-003",
@@ -250,14 +299,7 @@ def home():
             return s[:max_chars] + "..."
         return s
 
-    def extract_video_id(url):
-        if "youtu.be" in url:
-            return url.split('/')[-1]
-        elif "youtube.com" in url:
-            return url.split('v=')[1]
-        else:
-            return None
-
+    
     persona = ""
     video_id = None  # Initialize video_id to None
     video_title = None  # Initialize video_id to None
@@ -295,13 +337,13 @@ def home():
             )
             # Extract the generated persona from the API response
             persona = completions.choices[0].text.strip()
-
+            print("OpenAI completion:", completions)
         except Exception as e:
             print(f"An error occurred while calling the OpenAI API: {e}")
             persona = "Error: Unable to generate persona."
 
       
-        print("OpenAI completion:", completions)
+        
     # Return the generated persona as the result of the form submission
         return persona
     else:
@@ -313,7 +355,6 @@ def home():
         return render_template('/home.html', persona="")
     else:
         return render_template('/home.html', persona=persona)
-
 
 #Start the Flask app and tell it to listen for incoming HTTP requests
 #if __name__ == '__main__':
